@@ -1,4 +1,4 @@
-ean
+#clean
 docker rm -f h1 h2 s1 s2 s3
 
 # hosts
