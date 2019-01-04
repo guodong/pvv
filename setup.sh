@@ -17,7 +17,7 @@ s1ns=$(docker inspect --format '{{.State.Pid}}' s1)
 s2ns=$(docker inspect --format '{{.State.Pid}}' s2)
 s3ns=$(docker inspect --format '{{.State.Pid}}' s3)
 
-# and links
+# add links
 nsenter -t $h1ns -n ip link add eth0 type veth peer name eth0 netns $s1ns
 nsenter -t $s1ns -n ip link add eth1 type veth peer name eth1 netns $s3ns
 nsenter -t $s1ns -n ip link add eth2 type veth peer name eth0 netns $s2ns
