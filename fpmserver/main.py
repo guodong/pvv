@@ -11,6 +11,8 @@ ifaces = netifaces.interfaces()
 
 # fpm nexthop interface id to ovs port id, eg: 9 -> 0 means #9 is i0, i0 -> eth0, eth0 -> of port 1
 def ifIdtoPortId(ifId):
+    if ifId > 100: # it's docker bridge
+        return None
     iface = ifaces[ifId - 1]
     idx = iface[1:]
     if idx == 'o':
@@ -47,7 +49,8 @@ def bytes2Ip(bts):
 
     return '.'.join("{:d}".format(ord(x)) for x in bts)
 
-cmd = 'ovs-ofctl add-flow s table=0,priority=0,actions=resubmit\(,100\)'
+# table 1 is pvv, pvv table should be controlled by controller
+cmd = 'ovs-ofctl add-flow s table=0,priority=0,actions=resubmit\(,1\)'
 os.system(cmd)
 
 addr = ('127.0.0.1', 2620)
