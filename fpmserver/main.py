@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import socket
 import array
 import struct
@@ -5,9 +6,10 @@ import os
 import netifaces
 from python_arptable import ARPTABLE
 import fpm_pb2 as fpm
+import time
 
 ifaces = netifaces.interfaces()
-
+ifaces.remove('eth0')
 
 # fpm nexthop interface id to ovs port id, eg: 9 -> 0 means #9 is i0, i0 -> eth0, eth0 -> of port 1
 def ifIdtoPortId(ifId):
@@ -74,4 +76,10 @@ while True:
             dst = bytes2Ip(m.add_route.key.prefix.bytes) + '/' + str(m.add_route.key.prefix.length)
             output = ifIdtoPortId(m.add_route.nexthops[0].if_id.index)
             if output is not None:
+                start = time.time()
                 add_flow(dst, str(output))
+                end = time.time()
+                used = end - start
+                with open('/tmp/result', 'a') as f:
+                    #f.write(repr(end) + '\n')
+                    f.write("%f\n" % end)
